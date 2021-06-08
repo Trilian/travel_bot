@@ -14,7 +14,7 @@ class DefaultConfig:
     APP_ID = "f6e44223-91c7-429c-88b2-4669a74182df"
     APP_PASSWORD = "d72707e7-4331-4253-8f33-682fd6b72199"
     LUIS_APP_ID = "cafda911-e530-4237-8983-7452fa0cfe08"
-    LUIS_API_KEY = "b8e697c56d0340e5a6df74609c2e5d5e"
+    LUIS_API_KEY = "k7AJAo6o-e1nMc-R8stJ-Q34ZGL~c._mJt"
     # LUIS endpoint host name, ie "westus.api.cognitive.microsoft.com"
     LUIS_API_HOST_NAME = "westeurope.api.cognitive.microsoft.com"
     APPINSIGHTS_INSTRUMENTATION_KEY = os.environ.get(

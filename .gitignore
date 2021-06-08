@@ -134,5 +134,10 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
+# vscode 
+.vscode/
+
 # Cython debug symbols
 cython_debug/
+dialogs/projet10.code-workspace
+

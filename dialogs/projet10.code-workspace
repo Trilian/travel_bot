@@ -1,13 +1,13 @@
 {
 	"folders": [
 		{
-			"path": ".."
+			"path": "..\\..\\EchoBot"
 		},
 		{
 			"path": "..\\..\\appLuis"
 		},
 		{
-			"path": "..\\..\\EchoBot"
+			"path": ".."
 		}
 	],
 	"settings": {}

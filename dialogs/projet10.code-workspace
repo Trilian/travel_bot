@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "..\\..\\appLuis"
+		},
+		{
+			"path": "..\\..\\EchoBot"
+		}
+	],
+	"settings": {}
+}

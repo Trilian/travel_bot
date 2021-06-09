@@ -18,6 +18,8 @@ from botbuilder.schema import Activity, ActivityTypes
 from bot import MyBot
 from config import DefaultConfig
 
+from adapter_with_error_handler import AdapterWithErrorHandler
+
 CONFIG = DefaultConfig()
 
 # Create adapter.

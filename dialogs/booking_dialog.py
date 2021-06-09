@@ -40,9 +40,9 @@ class BookingDialog(CancelAndHelpDialog):
 
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
-        #self.add_dialog(
-        #    DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
-        #)
+        self.add_dialog(
+            DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
+        )
         self.add_dialog(waterfall_dialog)
 
         self.initial_dialog_id = WaterfallDialog.__name__

@@ -8,4 +8,3 @@ botbuilder-applicationinsights==4.13.0
 botbuilder-integration-applicationinsights-aiohttp==4.13.0
 azure-cognitiveservices-language-luis==0.2.0
 msrest==0.6.10
-datatypes_date_time

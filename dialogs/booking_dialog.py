@@ -8,7 +8,7 @@ from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import DateResolverDialog
+#from .date_resolver_dialog import DateResolverDialog
 
 
 class BookingDialog(CancelAndHelpDialog):
@@ -125,7 +125,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.start_date
         ):
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.start_date
+                #DateResolverDialog.__name__, booking_details.start_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.start_date)
@@ -145,7 +145,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.end_date
         ):
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.end_date
+                #DateResolverDialog.__name__, booking_details.end_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.end_date)

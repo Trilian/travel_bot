@@ -21,6 +21,7 @@ from botbuilder.schema import Activity, ActivityTypes
 from bot import MyBot
 from config import DefaultConfig
 from adapter_with_error_handler import AdapterWithErrorHandler
+from flight_booking_recognizer import FlightBookingRecognizer
 CONFIG = DefaultConfig()
 
 # Create adapter.
@@ -43,7 +44,7 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
     INSTRUMENTATION_KEY, telemetry_processor=AiohttpTelemetryProcessor(), client_queue_size=10
 )
 # Create dialogs and Bot
-#RECOGNIZER = FlightBookingRecognizer(CONFIG)
+RECOGNIZER = FlightBookingRecognizer(CONFIG)
 #BOOKING_DIALOG = BookingDialog()
 #DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
 #BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
@@ -67,7 +68,7 @@ def init_func(argv) :
     APP = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
     return APP
-    
+
 if __name__ == "__main__":
     APP = init_func(None)
     try:

@@ -42,7 +42,7 @@ class MainDialog(ComponentDialog):
         booking_dialog.telemetry_client = self.telemetry_client
 
         wf_dialog = WaterfallDialog(
-            "WFDialog", [self.intro_step]
+            "WFDialog", [self.intro_step, self.act_step]
         )
         wf_dialog.telemetry_client = self.telemetry_client
 

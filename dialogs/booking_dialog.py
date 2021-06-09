@@ -30,8 +30,8 @@ class BookingDialog(CancelAndHelpDialog):
                 self.destination_step,
                 self.origin_step,
                 self.budget_step,
-                self.start_date_step,
-                self.end_date_step,
+                #self.start_date_step,
+                #self.end_date_step,
                 self.confirm_step,
                 self.final_step,
             ],
@@ -164,7 +164,7 @@ class BookingDialog(CancelAndHelpDialog):
         message_text = (
             f"Please confirm, I have you traveling to: {booking_details.destination} from: "
             f"{booking_details.origin} for: {booking_details.budget}."
-            f"The flight is betwenn {booking_details.start_date} and {booking_details.end_date}"
+            #f"The flight is betwenn {booking_details.start_date} and {booking_details.end_date}"
         )
         prompt_message = MessageFactory.text(
             message_text, message_text, InputHints.expecting_input

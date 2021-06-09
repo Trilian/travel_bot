@@ -20,10 +20,12 @@ from botbuilder.integration.applicationinsights.aiohttp import (
 )
 from botbuilder.schema import Activity, ActivityTypes
 
-from bot import MyBot
 from config import DefaultConfig
+from dialogs import MainDialog, BookingDialog
+from bots import DialogAndWelcomeBot
 
 from adapter_with_error_handler import AdapterWithErrorHandler
+from flight_booking_recognizer import FlightBookingRecognizer
 
 CONFIG = DefaultConfig()
 
@@ -50,11 +52,11 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
 )
 
 # Create dialogs and Bot
-#RECOGNIZER = FlightBookingRecognizer(CONFIG)
-#BOOKING_DIALOG = BookingDialog()
-#DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
-#BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
-BOT = MyBot()
+RECOGNIZER = FlightBookingRecognizer(CONFIG)
+BOOKING_DIALOG = BookingDialog()
+DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
+BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
+#BOT = MyBot()
 
 # Listen for incoming requests on /api/messages.
 async def messages(req: Request) -> Response:

@@ -1,9 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import json
-import os.path
-
 from typing import List
 from botbuilder.dialogs import Dialog
 from botbuilder.core import (
@@ -13,7 +10,6 @@ from botbuilder.core import (
     BotTelemetryClient,
 )
 from botbuilder.schema import Activity, Attachment, ChannelAccount
-from helpers.activity_helper import create_activity_reply
 from .dialog_bot import DialogBot
 
 
@@ -40,25 +36,6 @@ class DialogAndWelcomeBot(DialogBot):
             # To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards
             # for more details.
             if member.id != turn_context.activity.recipient.id:
-                welcome_card = self.create_adaptive_card_attachment()
                 text_welcome = "Hello !"
-                #response = self.create_response(turn_context.activity, text_welcome)
-
                 await turn_context.send_activity(text_welcome)
 
-    def create_response(self, activity: Activity, attachment: Attachment):
-        """Create an attachment message response."""
-        response = create_activity_reply(activity)
-        response.attachments = [attachment]
-        return response
-
-    # Load attachment from file.
-    def create_adaptive_card_attachment(self):
-        relative_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(relative_path, "../cards/welcomeCard.json")
-        with open(path) as in_file:
-            card = json.load(in_file)
-
-        return Attachment(
-            content_type="application/vnd.microsoft.card.adaptive", content=card
-        )

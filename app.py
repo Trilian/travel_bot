@@ -23,6 +23,7 @@ from config import DefaultConfig
 from adapter_with_error_handler import AdapterWithErrorHandler
 from flight_booking_recognizer import FlightBookingRecognizer
 from dialogs import BookingDialog, MainDialog
+from bots import DialogAndWelcomeBot
 CONFIG = DefaultConfig()
 
 # Create adapter.
@@ -48,8 +49,8 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
 RECOGNIZER = FlightBookingRecognizer(CONFIG)
 BOOKING_DIALOG = BookingDialog()
 DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
-#BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
-BOT = MyBot()
+BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
+#BOT = MyBot()
 
 
 # Listen for incoming requests on /api/messages.

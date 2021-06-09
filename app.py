@@ -13,6 +13,11 @@ from botbuilder.core import (
     UserState,
 )
 from botbuilder.core.integration import aiohttp_error_middleware
+from botbuilder.applicationinsights import ApplicationInsightsTelemetryClient
+from botbuilder.integration.applicationinsights.aiohttp import (
+    AiohttpTelemetryProcessor,
+    bot_telemetry_middleware,
+)
 from botbuilder.schema import Activity, ActivityTypes
 
 from bot import MyBot

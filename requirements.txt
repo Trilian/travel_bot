@@ -1,3 +1,4 @@
+aiohttp==3.6
 botbuilder-core==4.13.0
 botframework-connector==4.13.0
 botbuilder-schema==4.13.0

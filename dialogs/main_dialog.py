@@ -50,7 +50,7 @@ class MainDialog(ComponentDialog):
         self._booking_dialog_id = booking_dialog.id
 
         self.add_dialog(text_prompt)
-        #self.add_dialog(booking_dialog)
+        self.add_dialog(booking_dialog)
         self.add_dialog(wf_dialog)
 
         self.initial_dialog_id = "WFDialog"

@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
+
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, DialogTurnResult, WaterfallStepContext
 from botbuilder.dialogs.prompts import (
@@ -57,18 +59,18 @@ class DateResolverDialog(CancelAndHelpDialog):
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
-                PromptOptions(
+                PromptOptions(  # pylint: disable=bad-continuation
                     prompt=MessageFactory.text(prompt_msg),
                     retry_prompt=MessageFactory.text(reprompt_msg),
                 ),
             )
 
         # We have a Date we just need to check it is unambiguous.
-        #if "definite" in Timex(timex).types:
+        if "definite" in Timex(timex).types:
             # This is essentially a "reprompt" of the data we were given up front.
-         #   return await step_context.prompt(
-          #      DateTimePrompt.__name__, PromptOptions(prompt=reprompt_msg)
-           # )
+            return await step_context.prompt(
+                DateTimePrompt.__name__, PromptOptions(prompt=reprompt_msg)
+            )
 
         return await step_context.next(DateTimeResolution(timex=timex))
 
@@ -77,13 +79,13 @@ class DateResolverDialog(CancelAndHelpDialog):
         timex = step_context.result[0].timex
         return await step_context.end_dialog(timex)
 
-    @staticmethod
-    async def datetime_prompt_validator(prompt_context: PromptValidatorContext) -> bool:
+    #@staticmethod
+    #async def datetime_prompt_validator(prompt_context: PromptValidatorContext) -> bool:
         """ Validate the date provided is in proper form. """
-        #if prompt_context.recognized.succeeded:
-            #timex = prompt_context.recognized.value[0].timex.split("T")[0]
+     #   if prompt_context.recognized.succeeded:
+        #     timex = prompt_context.recognized.value[0].timex.split("T")[0]
 
             # TODO: Needs TimexProperty
             #return "definite" in Timex(timex).types
 
-        return False
+        #return False

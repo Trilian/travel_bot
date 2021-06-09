@@ -8,6 +8,7 @@ from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
 
 
+
 class BookingDialog(CancelAndHelpDialog):
     """Flight booking implementation."""
 
@@ -122,7 +123,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.start_date
         ):
             return await step_context.begin_dialog(
-                #DateResolverDialog.__name__, booking_details.start_date
+                DateResolverDialog.__name__, booking_details.start_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.start_date)
@@ -142,7 +143,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.end_date
         ):
             return await step_context.begin_dialog(
-                #DateResolverDialog.__name__, booking_details.end_date
+                DateResolverDialog.__name__, booking_details.end_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.end_date)
@@ -163,7 +164,7 @@ class BookingDialog(CancelAndHelpDialog):
         message_text = (
             f"Please confirm, I have you traveling to: {booking_details.destination} from: "
             f"{booking_details.origin} for: {booking_details.budget}."
-            f"The flight is betwenn {booking_details.start_date} and {booking_details.end_date}"
+            #f"The flight is betwenn {booking_details.start_date} and {booking_details.end_date}"
         )
         prompt_message = MessageFactory.text(
             message_text, message_text, InputHints.expecting_input
@@ -187,10 +188,9 @@ class BookingDialog(CancelAndHelpDialog):
         return await step_context.end_dialog()
 
 
-    def is_ambiguous(self, timex: str) -> bool:
-        """ Ensure time is correct.
-        """
+    #def is_ambiguous(self, timex: str) -> bool:
+     #   """ Ensure time is correct.
+      #  """
 
-        #timex_property = Timex(timex)
+       # timex_property = Timex(timex)
         #return "definite" not in timex_property.types
-        return True

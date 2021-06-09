@@ -1,13 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-#from datatypes_date_time.timex import Timex
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-#from .date_resolver_dialog import DateResolverDialog
+
 
 
 class BookingDialog(CancelAndHelpDialog):

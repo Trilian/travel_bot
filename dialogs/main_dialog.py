@@ -45,7 +45,6 @@ class MainDialog(ComponentDialog):
             "WFDialog", [self.intro_step, self.act_step, self.final_step]
         )
         wf_dialog.telemetry_client = self.telemetry_client
-
         self._luis_recognizer = luis_recognizer
         self._booking_dialog_id = booking_dialog.id
 

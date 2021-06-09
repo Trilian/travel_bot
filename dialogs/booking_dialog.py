@@ -118,15 +118,16 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details = step_context.options
 
         # Capture the response to the previous step's prompt
-        booking_details.budget = step_context.result
-        if not booking_details.start_date or self.is_ambiguous(
-            booking_details.start_date
-        ):
-            return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.start_date
-            )  # pylint: disable=line-too-long
-
+        if booking_details.start_date is None:
+            message_text = "What is your start date ?"
+            prompt_message = MessageFactory.text(
+                message_text, message_text, InputHints.expecting_input
+            )
+            return await step_context.prompt(
+                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            )
         return await step_context.next(booking_details.start_date)
+
 
 
     async def end_date_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
@@ -139,13 +140,14 @@ class BookingDialog(CancelAndHelpDialog):
 
         # Capture the response to the previous step's prompt
         booking_details.start_date = step_context.result
-        if not booking_details.end_date or self.is_ambiguous(
-            booking_details.end_date
-        ):
-            return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.end_date
-            )  # pylint: disable=line-too-long
-
+        if booking_details.end_date is None:
+            message_text = "What is your end date ?"
+            prompt_message = MessageFactory.text(
+                message_text, message_text, InputHints.expecting_input
+            )
+            return await step_context.prompt(
+                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            )
         return await step_context.next(booking_details.end_date)
 
 

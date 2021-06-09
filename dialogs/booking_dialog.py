@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from datatypes_date_time.timex import Timex
+#from datatypes_date_time.timex import Timex
 
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
@@ -32,8 +32,8 @@ class BookingDialog(CancelAndHelpDialog):
                 self.destination_step,
                 self.origin_step,
                 self.budget_step,
-                self.start_date_step,
-                self.end_date_step,
+                #self.start_date_step,
+                #self.end_date_step,
                 self.confirm_step,
                 self.final_step,
             ],
@@ -194,5 +194,6 @@ class BookingDialog(CancelAndHelpDialog):
         """ Ensure time is correct.
         """
 
-        timex_property = Timex(timex)
-        return "definite" not in timex_property.types
+        #timex_property = Timex(timex)
+        #return "definite" not in timex_property.types
+        return True

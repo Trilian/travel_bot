@@ -89,7 +89,7 @@ class MainDialog(ComponentDialog):
         intent, luis_result = await LuisHelper.execute_luis_query(
             self._luis_recognizer, step_context.context
         )
-
+        print(intent)
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
@@ -114,15 +114,8 @@ class MainDialog(ComponentDialog):
             # Now we have all the booking details call the booking service.
 
             # If the call to the booking service was successful tell the user.
-            # time_property = Timex(result.travel_date)
-            # travel_date_msg = time_property.to_natural_language(datetime.now())
-            #msg_txt = f"I have you booked to {result.destination} from {result.origin} for {result.budget}. " \
-            #          f"The flight is between {result.start_date} and {result.end_date}"
             card = self.create_adaptive_card_attachment(result)
-
             response = MessageFactory.attachment(card)
-            #await turn_context.send_activity(response)
-            #message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(response)
 
         prompt_message = "What else can I do for you?"

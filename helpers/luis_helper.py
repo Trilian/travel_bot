@@ -29,9 +29,7 @@ def top_intent(intents: Dict[Intent, dict]) -> TopIntent:
 
 class LuisHelper:
     @staticmethod
-    async def execute_luis_query(
-            luis_recognizer: LuisRecognizer, turn_context: TurnContext
-    ) -> (Intent, object):
+    async def execute_luis_query(luis_recognizer: LuisRecognizer, turn_context: TurnContext) -> (Intent, object):
         """
         Returns an object with preformatted LUIS results for the bot's dialogs to consume.
         """
@@ -53,7 +51,7 @@ class LuisHelper:
 
             if intent == Intent.BOOK_FLIGHT.value:
                 result = BookingDetails()
-
+                
                 # We need to get the result from the LUIS JSON which at every level returns an array.
                 dst_city_entities = recognizer_result.entities.get("$instance", {}).get(
                     "dst_city", []
@@ -78,28 +76,18 @@ class LuisHelper:
                 start_date_entities = recognizer_result.entities.get("$instance", {}).get(
                     "str_date", []
                     )
-                if start_date_entities:
-                        timex = start_date_entities[0]["timex"]
+                if len(start_date_entities) > 0:
+    
+                    result.start_date = start_date_entities[0]["text"]
 
-                        if timex:
-                            datetime = timex[0].split("T")[0]
-
-                            result.start_date = datetime
-                        else:
-                            result.start_date = None
 
                 end_date_entities = recognizer_result.entities.get("$instance", {}).get(
                     "end_date", []
                     )
-                if end_date_entities:
-                        timex = end_date_entities[0]["timex"]
+                if len(end_date_entities) > 0:
+        
+                    result.end_date = end_date_entities[0]["text"]
 
-                        if timex:
-                            datetime = timex[0].split("T")[0]
-
-                            result.end_date = datetime
-                        else:
-                            result.end_date = None
         except Exception as exception:
             print(exception)
 

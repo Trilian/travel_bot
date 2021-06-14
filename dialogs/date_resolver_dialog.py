@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 
-
+from datatypes_date_time.timex import Timex
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, DialogTurnResult, WaterfallStepContext
 from botbuilder.dialogs.prompts import (
@@ -59,7 +59,7 @@ class DateResolverDialog(CancelAndHelpDialog):
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
-                PromptOptions(  # pylint: disable=bad-continuation
+                PromptOptions(
                     prompt=MessageFactory.text(prompt_msg),
                     retry_prompt=MessageFactory.text(reprompt_msg),
                 ),
@@ -79,13 +79,13 @@ class DateResolverDialog(CancelAndHelpDialog):
         timex = step_context.result[0].timex
         return await step_context.end_dialog(timex)
 
-    #@staticmethod
-    #async def datetime_prompt_validator(prompt_context: PromptValidatorContext) -> bool:
+    @staticmethod
+    async def datetime_prompt_validator(prompt_context: PromptValidatorContext) -> bool:
         """ Validate the date provided is in proper form. """
-     #   if prompt_context.recognized.succeeded:
-        #     timex = prompt_context.recognized.value[0].timex.split("T")[0]
+        if prompt_context.recognized.succeeded:
+            timex = prompt_context.recognized.value[0].timex.split("T")[0]
 
             # TODO: Needs TimexProperty
-            #return "definite" in Timex(timex).types
+            return "definite" in Timex(timex).types
 
-        #return False
+        return False

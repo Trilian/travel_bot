@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from datatypes_date_time.timex import Timex
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from datatypes_date_time.timex import Timex
-
+from .date_resolver_dialog import DateResolverDialog
 
 class BookingDialog(CancelAndHelpDialog):
     """Flight booking implementation."""
@@ -109,26 +109,27 @@ class BookingDialog(CancelAndHelpDialog):
             )
         return await step_context.next(booking_details.budget)
 
-    async def start_date_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+    async def start_date_step(
+        self, step_context: WaterfallStepContext
+    ) -> DialogTurnResult:
         """
         If an origin city has not been provided, prompt for one.
         :param step_context:
         :return DialogTurnResult:
         """
+
         booking_details = step_context.options
 
-        # Capture the response to the previous step's prompt
+        # Capture the results of the previous step
         booking_details.budget = step_context.result
-        if booking_details.start_date is None:
-            message_text = "What is your start date ?"
-            prompt_message = MessageFactory.text(
-                message_text, message_text, InputHints.expecting_input
-            )
-            return await step_context.prompt(
-                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-            )
-        return await step_context.next(booking_details.start_date)
+        if not booking_details.start_date or self.is_ambiguous(
+            booking_details.start_date
+        ):
+            return await step_context.begin_dialog(
+                DateResolverDialog.__name__, booking_details.start_date
+            )  # pylint: disable=line-too-long
 
+        return await step_context.next(booking_details.start_date)
 
 
     async def end_date_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:

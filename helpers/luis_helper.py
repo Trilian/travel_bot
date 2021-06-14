@@ -76,13 +76,14 @@ class LuisHelper:
                 start_date_entities = recognizer_result.entities.get("$instance", {}).get(
                     "str_date", []
                     )
+                print(start_date_entities)
                 if start_date_entities:
-                    timex = start_date_entities[0]["timex"]
+                    timex = start_date_entities[0]["text"]
 
                     if timex:
-                        datetime = timex[0].split("T")[0]
-
+                        datetime = timex.split("T")[0]
                         result.start_date = datetime
+  
 
                 else:
                     result.start_date = None
@@ -90,9 +91,16 @@ class LuisHelper:
                 end_date_entities = recognizer_result.entities.get("$instance", {}).get(
                     "end_date", []
                     )
-                if len(end_date_entities) > 0:
-        
-                    result.end_date = end_date_entities[0]["text"]
+                if end_date_entities:
+                    timex = end_date_entities[0]["text"]
+
+                    if timex:
+                        datetime = timex.split("T")[0]
+
+                        result.end_date = datetime
+
+                else:
+                    result.end_date = None
 
         except Exception as exception:
             print(exception)

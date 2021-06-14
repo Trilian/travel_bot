@@ -1,1 +1,5 @@
-book a flight from paris to berlin for 2020 between 21th september and 2nd october
+book a flight from paris to berlin for a budget of 2020$ from 21/09/2022 to 12th october 2022
+
+hi there, i'm looking to go to berlin from Paris between 30/09/2021 and 4th october 2021. My budget is 1400$
+
+http://localhost:3978/api/messages

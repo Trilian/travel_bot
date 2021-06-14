@@ -13,7 +13,7 @@ class DefaultConfig:
     PORT = 3978
     APP_ID = "9c2af855-06e0-4252-a525-c6a912fc7502"
     APP_PASSWORD = "5myP_L_w_uN86cujUW18t1xp1.xcZEnxP-"
-    LUIS_APP_ID = "9a4d53de-3156-4e7a-80ec-30803825ce2f"
+    LUIS_APP_ID = "3249daea-0bab-432d-a92a-2f642014bfd2"
     LUIS_API_KEY = "b8e697c56d0340e5a6df74609c2e5d5e"
     # LUIS endpoint host name, ie "westus.api.cognitive.microsoft.com"
     LUIS_API_HOST_NAME = "westeurope.api.cognitive.microsoft.com"

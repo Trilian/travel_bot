@@ -7,7 +7,7 @@ from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import DateResolverDialog
+from .date_resolver_dialog import DateResolverDialogEndDate, DateResolverDialogStartDate
 
 class BookingDialog(CancelAndHelpDialog):
     """Flight booking implementation."""
@@ -41,7 +41,10 @@ class BookingDialog(CancelAndHelpDialog):
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(
-            DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
+            DateResolverDialogStartDate(DateResolverDialogStartDate.__name__, self.telemetry_client)
+        )
+        self.add_dialog(
+            DateResolverDialogEndDate(DateResolverDialogEndDate.__name__, self.telemetry_client)
         )
         self.add_dialog(waterfall_dialog)
 
@@ -126,7 +129,7 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details.start_date
         ):
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.start_date
+                DateResolverDialogStartDate.__name__, booking_details.start_date
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.start_date)
@@ -142,14 +145,13 @@ class BookingDialog(CancelAndHelpDialog):
 
         # Capture the response to the previous step's prompt
         booking_details.start_date = step_context.result
-        if booking_details.end_date is None:
-            message_text = "What is your end date ?"
-            prompt_message = MessageFactory.text(
-                message_text, message_text, InputHints.expecting_input
-            )
-            return await step_context.prompt(
-                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-            )
+        if not booking_details.end_date or self.is_ambiguous(
+            booking_details.end_date
+        ):
+            return await step_context.begin_dialog(
+                DateResolverDialogEndDate.__name__, booking_details.end_date
+            )  # pylint: disable=line-too-long
+
         return await step_context.next(booking_details.end_date)
 
 

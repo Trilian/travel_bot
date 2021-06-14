@@ -6,7 +6,7 @@ from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-
+from datatypes_date_time.timex import Timex
 
 
 class BookingDialog(CancelAndHelpDialog):
@@ -191,9 +191,9 @@ class BookingDialog(CancelAndHelpDialog):
         return await step_context.end_dialog()
 
 
-    #def is_ambiguous(self, timex: str) -> bool:
-     #   """ Ensure time is correct.
-      #  """
+    def is_ambiguous(self, timex: str) -> bool:
+        """ Ensure time is correct.
+        """
 
-       # timex_property = Timex(timex)
-        #return "definite" not in timex_property.types
+        timex_property = Timex(timex)
+        return "definite" not in timex_property.types

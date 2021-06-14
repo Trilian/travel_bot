@@ -2,7 +2,12 @@
 # Licensed under the MIT License.
 
 
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+"""Handle date/time resolution for booking dialog."""
+
 from datatypes_date_time.timex import Timex
+
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from botbuilder.dialogs import WaterfallDialog, DialogTurnResult, WaterfallStepContext
 from botbuilder.dialogs.prompts import (
@@ -12,7 +17,6 @@ from botbuilder.dialogs.prompts import (
     DateTimeResolution,
 )
 from .cancel_and_help_dialog import CancelAndHelpDialog
-
 
 
 class DateResolverDialog(CancelAndHelpDialog):
@@ -59,7 +63,7 @@ class DateResolverDialog(CancelAndHelpDialog):
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
-                PromptOptions(
+                PromptOptions(  # pylint: disable=bad-continuation
                     prompt=MessageFactory.text(prompt_msg),
                     retry_prompt=MessageFactory.text(reprompt_msg),
                 ),

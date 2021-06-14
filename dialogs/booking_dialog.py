@@ -118,6 +118,7 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details = step_context.options
 
         # Capture the response to the previous step's prompt
+        booking_details.budget = step_context.result
         if booking_details.start_date is None:
             message_text = "What is your start date ?"
             prompt_message = MessageFactory.text(

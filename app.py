@@ -48,8 +48,10 @@ TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
 # Create dialogs and Bot
 RECOGNIZER = FlightBookingRecognizer(CONFIG)
 BOOKING_DIALOG = BookingDialog()
-DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
-BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
+DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG,
+                    telemetry_client=TELEMETRY_CLIENT)
+BOT = DialogAndWelcomeBot(
+    CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
 #BOT = MyBot()
 
 
@@ -66,10 +68,14 @@ async def messages(req: Request) -> Response:
     if response:
         return json_response(data=response.body, status=response.status)
     return Response(status=HTTPStatus.OK)
-def init_func(argv) :
-    APP = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
+
+
+def init_func(argv):
+    APP = web.Application(
+        middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
     return APP
+
 
 if __name__ == "__main__":
     APP = init_func(None)

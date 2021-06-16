@@ -1,5 +1,8 @@
-book a flight from paris to berlin for a budget of 2020$ from 21/09/2022 to 12th october 2022
+hi there, i'm looking to go to berlin from Paris between 14th october 2021 and 18th october 2021 . My budget is 1400$. 
 
-hi there, i'm looking to go to berlin from Paris between 30/09/2021 and 4th october 2021. My budget is 1400$
+I'd like to book a trip to Atlantis from Caprica on August 13, 2016 to August 20, 2016 I have a tight budget of 1700
+
+https://portal.azure.com/#blade/AppInsightsExtension/DetailsV2Blade/ComponentId/%7B%22SubscriptionId%22%3A%220386d80a-4585-4f06-b0ba-3a6d1b0dd8c6%22%2C%22ResourceGroup%22%3A%22appsvc_linux_centralus_basic%22%2C%22Name%22%3A%22travelBot2021%22%2C%22LinkedApplicationType%22%3A0%2C%22ResourceId%22%3A%22%252Fsubscriptions%252F0386d80a-4585-4f06-b0ba-3a6d1b0dd8c6%252FresourceGroups%252Fappsvc_linux_centralus_basic%252Fproviders%252FMicrosoft.Insights%252Fcomponents%252FtravelBot2021%22%2C%22ResourceType%22%3A%22microsoft.insights%252Fcomponents%22%2C%22IsAzureFirst%22%3Afalse%7D/DataModel/%7B%22eventId%22%3A%22c68866b9-cd39-11eb-a105-d3df0776b5a4%22%2C%22timestamp%22%3A%222021-06-14T17%3A55%3A56.328Z%22%2C%22cacheId%22%3A%22ea7d3d16-b56a-4dbd-b550-1f75887d7119%22%2C%22eventTable%22%3A%22customEvents%22%2C%22timeContext%22%3A%7B%22durationMs%22%3A86400000%2C%22endTime%22%3A%222021-06-14T18%3A23%3A04.524Z%22%7D%7D
+https://developers.google.com/assistant/conversation-design/welcome
 
 http://localhost:3978/api/messages

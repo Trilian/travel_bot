@@ -95,6 +95,17 @@ class MainDialog(ComponentDialog):
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
 
         else:
+            #Create first event.
+            firstEventProperties = {}
+
+            #Create new property for the second event.
+            firstEventProperties["MyImportantProperty2"] = "myImportantValue2"
+
+            #Log secondEventProperties event
+            self.telemetry_client.TrackEvent(
+                    "MySecondEvent",
+                    firstEventProperties)
+            
             didnt_understand_text = (
                 "Sorry, I didn't get that. Please try asking in a different way"
             )

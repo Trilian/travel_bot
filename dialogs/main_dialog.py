@@ -25,6 +25,9 @@ from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
 from .booking_dialog import BookingDialog
 
+from applicationinsights import TelemetryClient
+from config import DefaultConfig
+CONFIG = DefaultConfig()
 
 class MainDialog(ComponentDialog):
     def __init__(
@@ -95,16 +98,9 @@ class MainDialog(ComponentDialog):
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
 
         else:
-            #Create first event.
-            firstEventProperties = {}
-
-            #Create new property for the second event.
-            firstEventProperties["MyImportantProperty2"] = "myImportantValue2"
-
-            #Log secondEventProperties event
-            self.telemetry_client.TrackEvent(
-                    "MySecondEvent",
-                    firstEventProperties)
+            tc = TelemetryClient(CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY)
+            tc.track_event("Error to find the intent")
+            tc.flush()
             
             didnt_understand_text = (
                 "Sorry, I didn't get that. Please try asking in a different way"

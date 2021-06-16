@@ -191,6 +191,9 @@ class BookingDialog(CancelAndHelpDialog):
             booking_details = step_context.options
 
             return await step_context.end_dialog(booking_details)
+
+        self.telemetry_client.track_event("NonConfirmationBooking")
+        self.telemetry_client.flush()
         return await step_context.end_dialog()
 
 

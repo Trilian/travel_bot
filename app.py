@@ -18,7 +18,6 @@ from botbuilder.integration.applicationinsights.aiohttp import (
 )
 from botbuilder.schema import Activity, ActivityTypes
 
-from bot import MyBot
 from adapter_with_error_handler import AdapterWithErrorHandler
 from flight_booking_recognizer import FlightBookingRecognizer
 from dialogs import BookingDialog, MainDialog

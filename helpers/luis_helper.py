@@ -73,16 +73,26 @@ class LuisHelper:
 
                     result.budget = budget_entities[0]["text"]
 
+
+                date_entities = recognizer_result.entities.get("datetime", [])
+                if date_entities:
+                    timex = date_entities[0]["timex"]
+
+                    if timex:
+                        datetime_entity = timex[0].replace('(', '').replace(')','').split(",")[0]
+
                 start_date_entities = recognizer_result.entities.get("$instance", {}).get(
                     "str_date", []
                     )
-                print(start_date_entities)
+
+
                 if start_date_entities:
-                    timex = start_date_entities[0]["text"]
+                    if (date_entities[0]["type"]== 'date') or (date_entities[0]["type"]== 'daterange') :
+                        timex = date_entities[0]["timex"]
 
                     if timex:
-                        datetime = timex.split("T")[0]
-                        result.start_date = datetime
+                        datetime_entity = timex[0].replace('(', '').replace(')','').split(",")[0]
+                        result.start_date = datetime_entity
   
 
                 else:
@@ -92,12 +102,16 @@ class LuisHelper:
                     "end_date", []
                     )
                 if end_date_entities:
-                    timex = end_date_entities[0]["text"]
-
-                    if timex:
-                        datetime = timex.split("T")[0]
-
-                        result.end_date = datetime
+                    if (date_entities[0]["type"]== 'date') :
+                        timex = date_entities[0]["timex"]
+                        if timex:
+                            datetime_entity = timex[0].replace('(', '').replace(')','').split(",")[0]
+                            result.end_date = datetime_entity
+                    if (date_entities[0]["type"]== 'daterange') :
+                        timex = date_entities[0]["timex"]
+                        if timex:
+                            datetime_entity = timex[0].replace('(', '').replace(')','').split(",")[1]
+                            result.end_date = datetime_entity
 
                 else:
                     result.end_date = None

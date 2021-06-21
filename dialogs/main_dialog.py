@@ -10,7 +10,7 @@ from botbuilder.dialogs import (
     WaterfallStepContext,
     DialogTurnResult,
 )
-from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
+from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import (
     MessageFactory,
     CardFactory,
@@ -44,13 +44,14 @@ class MainDialog(ComponentDialog):
         booking_dialog.telemetry_client = self.telemetry_client
 
         wf_dialog = WaterfallDialog(
-            "WFDialog", [self.intro_step, self.act_step, self.final_step]
+            "WFDialog", [self.intro_step, self.act_step, self.final_step, self.greeting_step]
         )
         wf_dialog.telemetry_client = self.telemetry_client
         self._luis_recognizer = luis_recognizer
         self._booking_dialog_id = booking_dialog.id
 
         self.add_dialog(text_prompt)
+        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(booking_dialog)
         self.add_dialog(wf_dialog)
 
@@ -67,19 +68,8 @@ class MainDialog(ComponentDialog):
             )
 
             return await step_context.next(None)
-        message_text = (
-            str(step_context.options)
-            if step_context.options
-            else "Hello, What can I help you with today?"
-        )
-        prompt_message = MessageFactory.text(
-            message_text, message_text, InputHints.expecting_input
-        )
 
-        return await step_context.prompt(
-            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-        )
-
+        return await step_context.next(None)
     async def act_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         if not self._luis_recognizer.is_configured:
             # LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
@@ -91,7 +81,6 @@ class MainDialog(ComponentDialog):
         intent, luis_result = await LuisHelper.execute_luis_query(
             self._luis_recognizer, step_context.context
         )
-        print(intent)
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
@@ -124,9 +113,36 @@ class MainDialog(ComponentDialog):
             response = MessageFactory.attachment(card)
             await step_context.context.send_activity(response)
 
-        prompt_message = "What else can I do for you?"
-        return await step_context.replace_dialog(self.id, prompt_message)
+        message_text = "What else can I do for you?"
+        prompt_message = MessageFactory.text(
+            message_text, message_text, InputHints.expecting_input
+        )
+        #return await step_context.replace_dialog(self.id, prompt_message)
+        
+        return await step_context.prompt(
+            ConfirmPrompt.__name__, PromptOptions(prompt=prompt_message)
+        )
 
+    async def greeting_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        if step_context.result:
+            message_text = "I’m the traveler agent, How can I help you ?"
+            prompt_message = MessageFactory.text(
+                message_text, message_text, InputHints.expecting_input
+            )   
+            await step_context.context.send_activity(prompt_message)
+            
+            return await step_context.replace_dialog(self.id)
+
+        else :
+            message_text = "Thank you for your booking and good bye !"
+            prompt_message = MessageFactory.text(
+                message_text, message_text, InputHints.expecting_input
+            )   
+            await step_context.prompt(
+                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            )
+            return await step_context.end_dialog(self.id)
+            
     def replace(self, template: dict, data: dict):
         import re
         str_temp = str(template)

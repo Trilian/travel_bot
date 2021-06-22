@@ -87,12 +87,8 @@ class MainDialog(ComponentDialog):
 
         else:
             properties = {}
-            properties['budget'] = booking_details.travel_cost
-            properties['destination'] = booking_details.destination
-            properties['origin'] = booking_details.origin
-            properties['str_date'] = booking_details.travel_date_str
-            properties['end_date'] = booking_details.travel_date_end
-
+            properties['intent'] = intent
+            
             self.telemetry_client.track_event("UnrecognizedIntent", properties, 3)
             self.telemetry_client.flush()
 

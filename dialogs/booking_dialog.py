@@ -192,7 +192,14 @@ class BookingDialog(CancelAndHelpDialog):
 
             return await step_context.end_dialog(booking_details)
 
-        self.telemetry_client.track_event("NonConfirmationBooking")
+        properties = {}
+        properties['budget'] = booking_details.travel_cost
+        properties['destination'] = booking_details.destination
+        properties['origin'] = booking_details.origin
+        properties['str_date'] = booking_details.travel_date_str
+        properties['end_date'] = booking_details.travel_date_end
+
+        self.telemetry_client.track_event("NonConfirmationBooking", properties,3)
         self.telemetry_client.flush()
         return await step_context.end_dialog()
 

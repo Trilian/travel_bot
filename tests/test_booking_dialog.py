@@ -26,8 +26,8 @@ from botbuilder.schema import Activity, ActivityTypes, Attachment
 from botbuilder.dialogs import DialogSet, DialogTurnStatus
 from botbuilder.core.adapters import TestAdapter
 from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
-from travel_bot.dialogs.booking_dialog import BookingDialog
-from travel_bot.dialogs.main_dialog import MainDialog
+from dialogs.booking_dialog import BookingDialog
+from dialogs.main_dialog import MainDialog
 
 
 

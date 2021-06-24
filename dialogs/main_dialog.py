@@ -15,15 +15,13 @@ from botbuilder.core import (
     MessageFactory,
     CardFactory,
     TurnContext,
-    BotTelemetryClient,
-    NullTelemetryClient,
 )
 from botbuilder.schema import InputHints, Activity, Attachment, ChannelAccount
 
 from booking_details import BookingDetails
 from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
-from .booking_dialog import BookingDialog
+from dialogs.booking_dialog import BookingDialog
 
 from config import DefaultConfig
 CONFIG = DefaultConfig()
@@ -32,21 +30,16 @@ class MainDialog(ComponentDialog):
     def __init__(
             self,
             luis_recognizer: FlightBookingRecognizer,
-            booking_dialog: BookingDialog,
-            telemetry_client: BotTelemetryClient = None,
+            booking_dialog: BookingDialog
     ):
         super(MainDialog, self).__init__(MainDialog.__name__)
-        self.telemetry_client = telemetry_client or NullTelemetryClient()
 
         text_prompt = TextPrompt(TextPrompt.__name__)
-        text_prompt.telemetry_client = self.telemetry_client
-
-        booking_dialog.telemetry_client = self.telemetry_client
 
         wf_dialog = WaterfallDialog(
             "WFDialog", [self.intro_step, self.act_step, self.final_step, self.greeting_step]
         )
-        wf_dialog.telemetry_client = self.telemetry_client
+ 
         self._luis_recognizer = luis_recognizer
         self._booking_dialog_id = booking_dialog.id
 
@@ -68,6 +61,18 @@ class MainDialog(ComponentDialog):
             )
 
             return await step_context.next(None)
+        message_text = (
+            str(step_context.options)
+            if step_context.options
+            else "What can I help you with today?"
+        )
+        prompt_message = MessageFactory.text(
+            message_text, message_text, InputHints.expecting_input
+        )
+
+        return await step_context.prompt(
+            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+        )
 
         return await step_context.next(None)
     async def act_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
@@ -84,6 +89,15 @@ class MainDialog(ComponentDialog):
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
+            
+        if intent == Intent.CANCEL.value:
+            get_cancel_text = "Ok your travel is cancelled !"
+            get_cancel_message = MessageFactory.text(
+                get_cancel_text, get_cancel_text, InputHints.ignoring_input
+            )
+            await step_context.context.send_activity(get_cancel_message)
+
+            return await step_context.next(None)
 
         else:
             properties = {}

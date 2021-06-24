@@ -23,7 +23,21 @@ from flight_booking_recognizer import FlightBookingRecognizer
 from dialogs import BookingDialog, MainDialog
 from bots import DialogAndWelcomeBot
 from config import DefaultConfig
+
+import logging
+from opencensus.ext.azure.log_exporter import AzureLogHandler, AzureEventHandler
+from opencensus.ext.azure import metrics_exporter
+
 CONFIG = DefaultConfig()
+
+logger = logging.getLogger(__name__)
+
+logger.addHandler(AzureLogHandler(
+    connection_string='InstrumentationKey='+CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY)
+)
+logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey='+CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY))
+exporter = metrics_exporter.new_metrics_exporter(
+    connection_string='InstrumentationKey='+CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY)
 
 # Create adapter.
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
@@ -36,23 +50,16 @@ CONVERSATION_STATE = ConversationState(MEMORY)
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
 ADAPTER = AdapterWithErrorHandler(SETTINGS, CONVERSATION_STATE)
 
-# Create telemetry client.
-# Note the small 'client_queue_size'.  This is for demonstration purposes.  Larger queue sizes
-# result in fewer calls to ApplicationInsights, improving bot performance at the expense of
-# less frequent updates.
-INSTRUMENTATION_KEY = CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY
-TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
-    INSTRUMENTATION_KEY, telemetry_processor=AiohttpTelemetryProcessor(), client_queue_size=10
-)
 
 # Create dialogs and Bot
 RECOGNIZER = FlightBookingRecognizer(CONFIG)
 BOOKING_DIALOG = BookingDialog()
-DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG,
-                    telemetry_client=TELEMETRY_CLIENT)
-BOT = DialogAndWelcomeBot(
-    CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
-#BOT = MyBot()
+DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG)
+BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG)
+
+# Allow to manage application insight
+BOOKING_DIALOG.set_logger(logger)
+BOOKING_DIALOG.set_metrics_exporter(exporter)
 
 
 # Listen for incoming requests on /api/messages.

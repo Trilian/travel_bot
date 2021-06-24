@@ -4,10 +4,18 @@
 from datatypes_date_time.timex import Timex
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
-from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
+from botbuilder.core import MessageFactory
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import DateResolverDialogEndDate, DateResolverDialogStartDate
+from .date_resolver_dialog import DateResolverDialog
+
+
+from opencensus.stats import aggregation as aggregation_module
+from opencensus.stats import measure as measure_module
+from opencensus.stats import stats as stats_module
+from opencensus.stats import view as view_module
+from opencensus.tags import tag_map as tag_map_module
+from datetime import datetime
 
 class BookingDialog(CancelAndHelpDialog):
     """Flight booking implementation."""
@@ -15,14 +23,11 @@ class BookingDialog(CancelAndHelpDialog):
     def __init__(
         self,
         dialog_id: str = None,
-        telemetry_client: BotTelemetryClient = NullTelemetryClient(),
     ):
         super(BookingDialog, self).__init__(
-            dialog_id or BookingDialog.__name__, telemetry_client
+            dialog_id or BookingDialog.__name__,
         )
-        self.telemetry_client = telemetry_client
         text_prompt = TextPrompt(TextPrompt.__name__)
-        text_prompt.telemetry_client = telemetry_client
 
         waterfall_dialog = WaterfallDialog(
             WaterfallDialog.__name__,
@@ -36,20 +41,36 @@ class BookingDialog(CancelAndHelpDialog):
                 self.final_step,
             ],
         )
-        waterfall_dialog.telemetry_client = telemetry_client
-
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
-        self.add_dialog(
-            DateResolverDialogStartDate(DateResolverDialogStartDate.__name__, self.telemetry_client)
-        )
-        self.add_dialog(
-            DateResolverDialogEndDate(DateResolverDialogEndDate.__name__, self.telemetry_client)
-        )
+        self.add_dialog(DateResolverDialog(DateResolverDialog.__name__))
         self.add_dialog(waterfall_dialog)
 
         self.initial_dialog_id = WaterfallDialog.__name__
+        self.logger = None
+        self.stats = stats_module.stats
+        self.view_manager = self.stats.view_manager
+        self.stats_recorder = self.stats.stats_recorder
+        self.bot_measure = measure_module.MeasureInt("botdefects",
+                                           "number of bot defects",
+                                           "botdefects")
+        self.bot_view = view_module.View("defect view",
+                                    "number of bot defects",
+                                    [],
+                                    self.bot_measure,
+                                    aggregation_module.CountAggregation())
+        self.view_manager.register_view(self.bot_view)
+        self.mmap = self.stats_recorder.new_measurement_map()
+        self.tmap = tag_map_module.TagMap()
+        self.metrics_exporter = None
+        self.message_history = set()
 
+    def set_logger(self, logger):
+        self.logger = logger
+
+    def set_metrics_exporter(self, metrics_exporter):
+        self.metrics_exporter = metrics_exporter
+        self.view_manager.register_exporter(metrics_exporter)
 
     async def destination_step(
             self, step_context: WaterfallStepContext
@@ -60,6 +81,12 @@ class BookingDialog(CancelAndHelpDialog):
         :return DialogTurnResult:
         """
         booking_details = step_context.options
+        self.message_history.add(step_context._turn_context.activity.text)
+        print("from :",booking_details.origin)
+        print("to :",booking_details.destination)
+        print("start date  :",booking_details.start_date)
+        print("end date  :",booking_details.end_date)
+        print("budget :",booking_details.budget)
 
         if booking_details.destination is None:
             message_text = "Where would you like to travel to?"
@@ -78,6 +105,8 @@ class BookingDialog(CancelAndHelpDialog):
         :return DialogTurnResult:
         """
         booking_details = step_context.options
+        print("User message : ",step_context._turn_context.activity.text)
+        self.message_history.add(step_context._turn_context.activity.text)
 
         # Capture the response to the previous step's prompt
         booking_details.destination = step_context.result
@@ -99,7 +128,7 @@ class BookingDialog(CancelAndHelpDialog):
         :return DialogTurnResult:
         """
         booking_details = step_context.options
-
+        self.message_history.add(step_context._turn_context.activity.text)
         # Capture the response to the previous step's prompt
         booking_details.origin = step_context.result
         if booking_details.budget is None:
@@ -122,16 +151,17 @@ class BookingDialog(CancelAndHelpDialog):
         """
 
         booking_details = step_context.options
+        self.message_history.add(step_context._turn_context.activity.text)
+
 
         # Capture the results of the previous step
         booking_details.budget = step_context.result
         if not booking_details.start_date or self.is_ambiguous(
             booking_details.start_date
         ):
-            return await step_context.begin_dialog(
-                DateResolverDialogStartDate.__name__, booking_details.start_date
+             return await step_context.begin_dialog(
+                DateResolverDialog.__name__, {"field":booking_details.start_date,"booking_details":booking_details}
             )  # pylint: disable=line-too-long
-
         return await step_context.next(booking_details.start_date)
 
 
@@ -148,8 +178,8 @@ class BookingDialog(CancelAndHelpDialog):
         if not booking_details.end_date or self.is_ambiguous(
             booking_details.end_date
         ):
-            return await step_context.begin_dialog(
-                DateResolverDialogEndDate.__name__, booking_details.end_date
+             return await step_context.begin_dialog(
+                DateResolverDialog.__name__, {"field":booking_details.end_date,"booking_details":booking_details}
             )  # pylint: disable=line-too-long
 
         return await step_context.next(booking_details.end_date)
@@ -192,15 +222,20 @@ class BookingDialog(CancelAndHelpDialog):
 
             return await step_context.end_dialog(booking_details)
 
-        properties = {}
-        properties['budget'] = self.budget
-        properties['destination'] = self.destination
-        properties['origin'] = self.origin
-        properties['str_date'] = self.str_date
-        properties['end_date'] = self.end_date
-        
-        self.telemetry_client.track_event("NonConfirmationBooking", properties,3)
-        self.telemetry_client.flush()
+
+        properties = {'custom_dimensions': {'booking_details': step_context.options.get_details(),'message_history':str(self.message_history)}}
+
+        self.logger.warning("User has not confirmed flight",extra=properties)
+        self.mmap.measure_int_put(self.bot_measure, 1)
+        self.mmap.record(self.tmap)
+        metrics = list(self.mmap.measure_to_view_map.get_metrics(datetime.utcnow()))
+        print(metrics[0].time_series[0].points[0])
+
+        get_sorry_text = "Sorry about that !"
+        get_sorry_message = MessageFactory.text(
+            get_sorry_text, get_sorry_text, InputHints.ignoring_input
+        )
+        await step_context.context.send_activity(get_sorry_message)
         return await step_context.end_dialog()
 
 

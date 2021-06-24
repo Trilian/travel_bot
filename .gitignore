@@ -142,3 +142,5 @@ cython_debug/
 dialogs/projet10.code-workspace
 
 dialogs/workspace.code-workspace
+config.py
+config.py

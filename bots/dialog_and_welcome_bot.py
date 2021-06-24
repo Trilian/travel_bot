@@ -9,11 +9,11 @@ from botbuilder.core import (
     TurnContext,
     ConversationState,
     UserState,
-    BotTelemetryClient,
 )
 from botbuilder.schema import Activity, Attachment, ChannelAccount
 from .dialog_bot import DialogBot
 from helpers.activity_helper import create_activity_reply
+from helpers.dialog_helper import DialogHelper
 
 class DialogAndWelcomeBot(DialogBot):
     """Main dialog to welcome users."""
@@ -23,12 +23,10 @@ class DialogAndWelcomeBot(DialogBot):
         conversation_state: ConversationState,
         user_state: UserState,
         dialog: Dialog,
-        telemetry_client: BotTelemetryClient,
     ):
         super(DialogAndWelcomeBot, self).__init__(
-            conversation_state, user_state, dialog, telemetry_client
+            conversation_state, user_state, dialog
         )
-        self.telemetry_client = telemetry_client
 
     async def on_members_added_activity(
         self, members_added: List[ChannelAccount], turn_context: TurnContext
@@ -41,7 +39,11 @@ class DialogAndWelcomeBot(DialogBot):
                 welcome_card = self.create_adaptive_card_attachment()
                 response = self.create_response(turn_context.activity, welcome_card)
                 await turn_context.send_activity(response)
-
+                await DialogHelper.run_dialog(
+                    self.dialog,
+                    turn_context,
+                    self.conversation_state.create_property("DialogState"),
+                )
     def create_response(self, activity: Activity, attachment: Attachment):
         """Create an attachment message response."""
         response = create_activity_reply(activity)

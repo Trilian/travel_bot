@@ -16,3 +16,12 @@ class BookingDetails:
         self.budget = budget
         self.start_date = start_date
         self.end_date = end_date
+
+    def get_details(self):
+        return str({
+            "destination":self.destination,
+            "origin":self.origin,
+            "from_date":self.start_date,
+            "to_date:":self.end_date,
+            "budget:":self.budget
+        })

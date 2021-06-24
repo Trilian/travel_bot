@@ -13,3 +13,4 @@ msrest==0.6.10
 pep8
 pytest
 pylint
+opencensus-ext-azure

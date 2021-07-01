@@ -13,15 +13,15 @@ from botbuilder.dialogs import (
 from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
 from botbuilder.core import (
     MessageFactory,
-    CardFactory,
-    TurnContext,
 )
-from botbuilder.schema import InputHints, Activity, Attachment, ChannelAccount
+from botbuilder.schema import InputHints, Attachment
 
 from booking_details import BookingDetails
 from flight_booking_recognizer import FlightBookingRecognizer
 from helpers.luis_helper import LuisHelper, Intent
 from dialogs.booking_dialog import BookingDialog
+
+
 
 from config import DefaultConfig
 CONFIG = DefaultConfig()
@@ -42,7 +42,8 @@ class MainDialog(ComponentDialog):
  
         self._luis_recognizer = luis_recognizer
         self._booking_dialog_id = booking_dialog.id
-
+        self.logger = None
+        self.message_history = set()
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(booking_dialog)
@@ -61,6 +62,7 @@ class MainDialog(ComponentDialog):
             )
 
             return await step_context.next(None)
+        self.message_history.add(step_context._turn_context.activity.text)
         message_text = (
             str(step_context.options)
             if step_context.options
@@ -74,7 +76,9 @@ class MainDialog(ComponentDialog):
             TextPrompt.__name__, PromptOptions(prompt=prompt_message)
         )
 
-        return await step_context.next(None)
+    def set_logger(self, logger):
+        self.logger = logger
+
     async def act_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         if not self._luis_recognizer.is_configured:
             # LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
@@ -86,6 +90,7 @@ class MainDialog(ComponentDialog):
         intent, luis_result = await LuisHelper.execute_luis_query(
             self._luis_recognizer, step_context.context
         )
+        
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
             return await step_context.begin_dialog(self._booking_dialog_id, luis_result)
@@ -100,11 +105,10 @@ class MainDialog(ComponentDialog):
             return await step_context.next(None)
 
         else:
-            properties = {}
-            properties['intent'] = intent
-            
-            self.telemetry_client.track_event("UnrecognizedIntent", properties, 3)
-            self.telemetry_client.flush()
+            self.message_history.add(step_context._turn_context.activity.text)
+            properties = {'custom_dimensions': {'message_history':str(self.message_history)}}
+
+            self.logger.warning("Intent was not recognized",extra=properties)
 
             didnt_understand_text = (
                 "Sorry, I didn't get that. Please try asking in a different way"
@@ -121,7 +125,7 @@ class MainDialog(ComponentDialog):
         # the Result here will be null.
         if step_context.result is not None:
             result = step_context.result
-
+            
             # Now we have all the booking details call the booking service.
 
             # If the call to the booking service was successful tell the user.

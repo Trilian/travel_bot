@@ -231,7 +231,7 @@ class BookingDialog(CancelAndHelpDialog):
         metrics = list(self.mmap.measure_to_view_map.get_metrics(datetime.utcnow()))
         print(metrics[0].time_series[0].points[0])
 
-        get_sorry_text = "Sorry about that !"
+        get_sorry_text = "I'm sorry I couldn't help you"
         get_sorry_message = MessageFactory.text(
             get_sorry_text, get_sorry_text, InputHints.ignoring_input
         )

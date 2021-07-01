@@ -7,8 +7,7 @@ from botbuilder.dialogs import (
     DialogTurnResult,
     DialogTurnStatus,
 )
-from botbuilder.schema import ActivityTypes, InputHints
-from botbuilder.core import MessageFactory
+from botbuilder.schema import ActivityTypes
 
 
 class CancelAndHelpDialog(ComponentDialog):

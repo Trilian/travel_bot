@@ -1,34 +1,20 @@
 
-
-
-import sys
-import pathlib
-import pytest
 import aiounittest
-import asyncio
-
-
-from botbuilder.testing.dialog_test_client import DialogTestClient
 from botbuilder.schema import Activity, ActivityTypes
 from botbuilder.dialogs.prompts import (
-    AttachmentPrompt, 
     PromptOptions, 
-    PromptValidatorContext, 
 )
 
 from botbuilder.core import (
     TurnContext, 
     ConversationState, 
     MemoryStorage, 
-    MessageFactory, 
 )
-from botbuilder.schema import Activity, ActivityTypes, Attachment
+from botbuilder.schema import Activity, ActivityTypes
 from botbuilder.dialogs import DialogSet, DialogTurnStatus
 from botbuilder.core.adapters import TestAdapter
 from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
 from dialogs.booking_dialog import BookingDialog
-from dialogs.main_dialog import MainDialog
-
 
 
 class TestBookingDialog():

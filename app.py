@@ -11,12 +11,10 @@ from botbuilder.core import (
     UserState,
 )
 from botbuilder.core.integration import aiohttp_error_middleware
-from botbuilder.applicationinsights import ApplicationInsightsTelemetryClient
 from botbuilder.integration.applicationinsights.aiohttp import (
-    AiohttpTelemetryProcessor,
     bot_telemetry_middleware,
 )
-from botbuilder.schema import Activity, ActivityTypes
+from botbuilder.schema import Activity
 
 from adapter_with_error_handler import AdapterWithErrorHandler
 from flight_booking_recognizer import FlightBookingRecognizer
@@ -31,6 +29,7 @@ from opencensus.ext.azure import metrics_exporter
 CONFIG = DefaultConfig()
 
 logger = logging.getLogger(__name__)
+
 
 logger.addHandler(AzureLogHandler(
     connection_string='InstrumentationKey='+CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY)

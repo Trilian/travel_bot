@@ -6,6 +6,7 @@
 # Licensed under the MIT License.
 """Handle date/time resolution for booking dialog."""
 
+
 from datatypes_date_time.timex import Timex
 
 from botbuilder.core import MessageFactory
@@ -16,7 +17,6 @@ from botbuilder.dialogs.prompts import (
     PromptOptions,
     DateTimeResolution,
 )
-
 from botbuilder.schema import InputHints
 from .cancel_and_help_dialog import CancelAndHelpDialog
 
@@ -53,7 +53,8 @@ class DateResolverDialog(CancelAndHelpDialog):
         timex = step_context.options['field']
         booking_details = step_context.options['booking_details']
 
-        if booking_details.from_date is None:
+        if booking_details.start_date is None:
+            print("start_date boucle")
             prompt_msg_text = "When do you want to fly?"
         else:
             prompt_msg_text = "When will you return?"
@@ -69,14 +70,16 @@ class DateResolverDialog(CancelAndHelpDialog):
         )
 
         if timex is None:
+            print("ok timex")
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
                 PromptOptions( 
-                    prompt=MessageFactory.text(prompt_msg),
-                    retry_prompt=MessageFactory.text(reprompt_msg),
+                    prompt=prompt_msg,
+                    retry_prompt=reprompt_msg,
                 ),
             )
+
 
         # We have a Date we just need to check it is unambiguous.
         if "definite" not in Timex(timex).types:
@@ -89,7 +92,7 @@ class DateResolverDialog(CancelAndHelpDialog):
 
     async def final_step(self, step_context: WaterfallStepContext):
         """Cleanup - set final return value and end dialog."""
-        timex = step_context.result.timex
+        timex = step_context.result[0].timex
         return await step_context.end_dialog(timex)
 
     @staticmethod

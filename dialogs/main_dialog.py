@@ -51,6 +51,9 @@ class MainDialog(ComponentDialog):
 
         self.initial_dialog_id = "WFDialog"
 
+    def set_logger(self, logger):
+        self.logger = logger
+        
     async def intro_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         if not self._luis_recognizer.is_configured:
             await step_context.context.send_activity(
@@ -75,9 +78,6 @@ class MainDialog(ComponentDialog):
         return await step_context.prompt(
             TextPrompt.__name__, PromptOptions(prompt=prompt_message)
         )
-
-    def set_logger(self, logger):
-        self.logger = logger
 
     async def act_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         if not self._luis_recognizer.is_configured:
@@ -118,7 +118,7 @@ class MainDialog(ComponentDialog):
             )
             await step_context.context.send_activity(didnt_understand_message)
 
-        return await step_context.next(None)
+            return await step_context.next(None)
 
     async def final_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         # If the child dialog ("BookingDialog") was cancelled or the user failed to confirm,

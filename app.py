@@ -59,7 +59,7 @@ BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG)
 # Allow to manage application insight
 BOOKING_DIALOG.set_logger(logger)
 BOOKING_DIALOG.set_metrics_exporter(exporter)
-
+DIALOG.set_logger(logger)
 
 # Listen for incoming requests on /api/messages.
 async def messages(req: Request) -> Response:
